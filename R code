@@ -1,0 +1,54 @@
+# Install Libraries
+
+install.packages("tidyr")
+install.packages("dplyr")
+install.packages("dummies")
+
+# Load libraries
+
+library("tidyr")
+library("dplyr")
+library("dummies")
+
+# Load titanic dataset as "titanic"
+
+titanic <- read.csv("C:/Users/M/Desktop/R/3.1.5 Project/titanic_original.csv")
+
+# Number of unique "embarked" factors?
+
+titanic %>% group_by(embarked) %>% summarize(count=n())
+
+#Replace blank entries with "S"
+
+titanic$embarked <- sub("^$", "S", titanic$embarked)
+
+# Confirm replacement
+
+titanic %>% group_by(embarked) %>% summarize(count=n())
+
+# Calculate mean and median of age with NA removed
+mean_age <- mean(titanic$age, na.rm = TRUE)
+median_age <- median(titanic$age, na.rm = TRUE)
+
+# Replace NA age values with mean age - can't use sub function as it's not a character
+
+titanic$age <-  replace(titanic$age, is.na(titanic$age), mean(titanic$age, na.rm = TRUE))
+
+# Confirm Replacement
+
+print(titanic$age)
+
+# Add dummy NA variable to boat category
+
+titanic$boat <- sub("^$", "NA", titanic$boat)
+
+# Add new binary variable has_cabin_number which has 1 if there is a cabin number, and 0 otherwise.
+titanic$has_cabin_number <- ifelse(titanic$cabin == "", 0, 1)
+
+# Print dataframe "d"
+
+print(titanic)
+
+# Write new .csv file
+
+write.csv(titanic, "titanic_original.csv")
